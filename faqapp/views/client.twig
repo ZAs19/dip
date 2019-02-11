@@ -1,0 +1,89 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQ</h1>
+    </header>
+    <section class="cd-faq">
+        <ul class="cd-faq-categories">
+            {% for category in categories %}
+                <li><a {% if loop.first == true %}class="selected"{% endif %}
+                       href="#{{ category['name'] }}">{{ category['name'] }}</a></li>
+            {% endfor %}
+            <li><a href="#addQuestion">Ask your question</a></li>
+        </ul>
+        <div class="cd-faq-items">
+            {% for category, questions in categoriesWithQuestions %}
+                <ul id="{{ category }}" class="cd-faq-group">
+                    <li class="cd-faq-title"><h2>{{ category }}</h2></li>
+                    {% for question in questions %}
+                        <li>
+                            <span class="cd-faq-trigger"><a style="text-decoration: none;"
+                                                            href="#0">{{ question['name'] }}</a></span>
+                            <div class="cd-faq-content text-left">
+                                <p>{{ question['answer'] }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+            <ul id="addQuestion" class="cd-faq-group text-center">
+                <li class="cd-faq-title"><h2 class="text-left">Ask your question</h2></li>
+                <li>
+                    <span class="cd-faq-trigger text-left"><a style="text-decoration: none;" href="#0">Sending form</a></span>
+                    <div class="cd-faq-content">
+                        <form class="form" action="?" method="POST">
+                            <div class="form-group row">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span
+                                                class="glyphicon glyphicon-user"></span></span>
+                                    <input type="text" class="form-control" placeholder="Name" name="author" id="author"
+                                           value="{% if author is defined %}{{ author }}{% endif %}" required>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span
+                                                class="glyphicon glyphicon-envelope"></span></span>
+                                    <input type="email" class="form-control" placeholder="E-mail" name="author_email"
+                                           id="author_email"
+                                           value="{% if author_email is defined %}{{ author_email }}{% endif %}"
+                                           required>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span
+                                                class="glyphicon glyphicon-list"></span></span>
+                                    <select class="form-control" name="category_id" id="category_selector">
+                                        {% for category in categories %}
+                                            <option
+                                                    {% if category_id is defined %}
+                                                        {% if category_id == category['id'] %} selected{% endif %}
+                                                    {% endif %}
+                                                    required
+                                                    value="{{ category['id'] }}">{{ category['name'] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                            <textarea class="form-control" rows="4" name="question" id="comment"
+                                      required>{% if question is defined %}{{ question }}{% endif %}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" name="add" class="btn btn-default btn-block">Send</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <br/><br/><br/><br/><br/>
+        <div class="jumbotron footer">
+            <p class="text-center"><a class="footer" href="{{ staticCall('Router', 'route', ['login']) }}">FAQ App
+                    ©2018</a></p>
+        </div>
+    </section>
+{% endblock %}

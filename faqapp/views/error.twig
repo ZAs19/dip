@@ -1,0 +1,22 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQApp's Error page</h1>
+    </header>
+    <div class="container jumbotron">
+        <div class="col-xs-10 col-xs-offset-1">
+            {% for error in errors %}
+                <div id="alert" class="alert {{ error.getType() }} text-center">{{ error.getMessage() }}</div>
+            {% endfor %}
+        </div>
+        <br/>
+        <div class="col-xs-2 col-xs-offset-5">
+            <a class="btn btn-default btn-block" href="{{ staticCall('Router', 'route', ['index']) }}">Back to main
+                page</a>
+        </div>
+    </div>
+{% endblock %}

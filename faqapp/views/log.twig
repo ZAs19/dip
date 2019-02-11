@@ -1,0 +1,17 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQApp's log</h1>
+    </header>
+    <div class="container jumbotron">
+        {% if logs is defined %}
+            {% for log in logs %}
+                <p>{{ log }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

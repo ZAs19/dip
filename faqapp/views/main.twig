@@ -1,0 +1,79 @@
+{# app/views/***.twig #}
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <title>FAQ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+    <link href="vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="vendor/twbs/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    {% block styles %}
+    {% endblock %}
+
+    <script src="assets/js/modernizr.js"></script>
+    <script src="vendor/twbs/bootstrap/dist/js/bootstrap.js"></script>
+
+</head>
+<body>
+<div class="row">
+    {% if user is defined %}
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+            <span {% if staticCall('Router', 'currentRouteName') == 'index'
+                      or staticCall('Router', 'currentRouteName') == 'index_store' %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['index']) }}">App review</a>
+            </span>
+
+                <span {% if 'users' in staticCall('Router', 'currentRouteName') %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['users.index']) }}">Admins list</a>
+            </span>
+
+                <span {% if 'categories' in staticCall('Router', 'currentRouteName') %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['categories.index']) }}">Categories</a>
+            </span>
+
+                <span {% if 'questions' in staticCall('Router', 'currentRouteName') %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['questions.index']) }}">Questions</a>
+            </span>
+
+                <span {% if staticCall('Router', 'currentRouteName') == 'logger' %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['logger']) }}">App log</a>
+            </span>
+
+                <span {% if 'blacklist' in staticCall('Router', 'currentRouteName') %}class="active"{% endif %}>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['blacklist']) }}">Black list</a>
+            </span>
+
+                <span class="navbar-right">
+                <span class="navbar-brand">Hello {{ user }}!</span>
+
+            <span>
+                <a class="navbar-brand" href="{{ staticCall('Router', 'route', ['logout']) }}">Logout</a>
+            </span>
+            </span>
+
+            </div>
+        </nav>
+    {% endif %}
+</div>
+
+<div{% if user is defined %}{% endif %}></div>
+
+{#{% if user is defined %}#}
+{#<div class="nav-delimeter"></div>#}
+{#{% endif %}#}
+
+{% block body %}
+{% endblock %}
+
+<script src="assets/js/jquery-2.1.1.js"></script>
+<script src="assets/js/jquery.mobile.custom.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="vendor/twbs/bootstrap/js/dropdown.js"></script>
+
+</body>
+</html>

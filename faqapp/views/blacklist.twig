@@ -1,0 +1,33 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQApp's blacklist</h1>
+    </header>
+    <br/>
+    <div class="container">
+        <div class="row">
+            <form class="form-container"
+                  action="{{ staticCall('Router', 'route', ['blacklist_store']) }}" method="POST">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="panel panel-default">
+                        <div class="form-group">
+                            <label for="list" class="panel-heading">List of forbidden words</label>
+                            <textarea class="form-control" rows="5" name="list" id="list"
+                                      placeholder="Enter the blacklist phrases by separating them with a line break"
+                                      required>{% if items is defined %}{{ items }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-sm-offset-5 form-group">
+                    <div class="form-group">
+                        <input class="btn btn-default btn-block" type="submit" name="add" value="Save">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

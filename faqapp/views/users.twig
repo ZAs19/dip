@@ -1,0 +1,109 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQApp's list of admins</h1>
+    </header>
+    <br/>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                {% if action is defined %}
+                    <form class="form-horizontal form-container"
+                            {% if action == 'edit' %}
+                                action="{{ staticCall('Router', 'route', ['users.update', {'id' : id }]) }}"
+                            {% else %}
+                                action="{{ staticCall('Router', 'route', ['users.store']) }}"
+                            {% endif %}
+                          method="POST">
+                        <h3 class="text-center">{% if action == 'edit' %}Change{% else %}Add new{% endif %} admin</h3>
+                        <br/>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Login</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="name" id="name" placeholder="Login"
+                                       value="{% if editItem['name'] is defined %}{{ editItem['name'] }}{% endif %}"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="password" name="password" id="password"
+                                       placeholder="Password"
+                                       {% if action == 'edit' %}data-toggle="tooltip"
+                                       title="If you do not need to change the password, leave this field blank."
+                                       {% else %}required{% endif %}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                {% if action == 'edit' %}
+                                    <input type="hidden" name='_method' value="PUT">
+                                    <input type="hidden" name="id" value="{{ editItem['id'] }}">
+                                    <input class="btn btn-success btn-block" type="submit" name="save" value="Save">
+                                {% else %}
+                                    <input class="btn btn-success btn-block" type="submit" name="add" value="Add">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="col-sm-10 col-sm-offset-1">
+                {% for error in errors %}
+                    <div id="alert" class="alert {{ error.getType() }} text-center">{{ error.getMessage() }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <table class="table table-condensed">
+                    <tr>
+                        <th>№</th>
+                        <th>Login</th>
+                        <th>Password</th>
+                        <th>Created</th>
+                        <th>Updated</th>
+                        <th>Control</th>
+                    </tr>
+                    {% for user in items %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ user['name'] }}</td>
+                            <td>********</td>
+                            <td>{{ user['created_at'] }}</td>
+                            <td>{{ user['updated_at'] }}</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <a class="btn btn-default btn-block"
+                                           href="{{ staticCall('Router', 'route', ['users.edit', {'id' : user['id']}]) }}">Update</a>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <form class="d-inline-block"
+                                              action="{{ staticCall('Router', 'route', ['users.destroy', {'id' : user['id']}]) }}"
+                                              method="POST">
+                                            <input type="hidden" name='_method' value="DELETE">
+                                            <input class="btn btn-danger btn-block" type="submit" name="delete"
+                                                   value="Delete">
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2 col-sm-offset-5 form-group">
+                <a class="btn btn-default btn-block" href="{{ staticCall('Router', 'route', ['users.create']) }}">Add
+                    admin</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

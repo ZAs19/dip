@@ -1,0 +1,15 @@
+{
+    "name": "greev/php-23-dp-faq",
+    "description": "Diploma work of Netology \"PHP/SQL: back-end\" (php-23) course",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Grigorii Balabanov",
+            "email": "810411@mail.ru"
+        }
+    ],
+    "require": {
+        "twig/twig": "^1.35.3",
+        "twbs/bootstrap": "^3.3.7"
+    }
+}

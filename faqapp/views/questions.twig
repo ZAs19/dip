@@ -1,0 +1,199 @@
+{% extends 'main.twig' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>FAQApp's list of questions</h1>
+    </header>
+    <nav class="navbar navbar" role="navigation">
+        <div class="container">
+            <span class="navbar-brand">Select:</span>
+            <span class="dropdown">
+            <a href="#" class="navbar-brand dropdown-toggle" data-toggle="dropdown">Category<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                {% for category in categories %}
+                    <li {% if ['category/', category['id']]|join in staticCall('Router', 'currentRouteUrl') %}
+                        class="active"
+                            {% endif %}>
+                        <a href="{{ staticCall('Router', 'route', ['quest_by_category', {'category' : category['id'] }]) }}">
+                            {{ category['name'] }}
+                            <span class="badge pull-right">{% if num_question_categories[category['id']] is defined %}
+                                    {{ num_question_categories[category['id']] }}{% endif %}
+                        </span></a>
+                    </li>
+                {% endfor %}
+            </ul>
+            </span>
+            <span class="dropdown">
+            <a href="#" class="navbar-brand dropdown-toggle" data-toggle="dropdown">Questions state<b
+                        class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li {% if 'questions' in staticCall('Router', 'currentRouteName') %}class="active"{% endif %}>
+                <a href="{{ staticCall('Router', 'route', ['questions.index']) }}">All
+                    <span
+                            class="badge">{% if num_questions is defined %}{{ num_questions }}{% endif %}</span></a>
+                </li>
+                {% for state in states %}
+                    <li {% if ['state/', loop.index0]|join in staticCall('Router', 'currentRouteUrl') %}class="active"{% endif %}>
+                    <a href="{{ staticCall('Router', 'route', ['quest_by_state', {'state' : loop.index0 }]) }}">{{ state|capitalize }}
+                        <span class="badge">
+                        {% if num_question_states[loop.index0] is defined %}{{ num_question_states[loop.index0] }}{% endif %}
+                      </span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            </span>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                {% if action is defined %}
+                    <form class="form-horizontal form-container"
+                            {% if action == 'edit' %}
+                                action="{{ staticCall('Router', 'route', ['questions.update', {'id' : id }]) }}"
+                            {% else %}
+                                action="{{ staticCall('Router', 'route', ['questions.store']) }}"
+                            {% endif %}
+                          method="POST">
+                        <div class="form-group">
+                            <h3>{% if action == 'edit' %}Update{% else %}Add new{% endif %} question</h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="category_selector" class="col-sm-2 control-label">Category</label>
+                            <div class="col-sm-10">
+                                <select class="form-control def-width" name="category_id" id="category_selector">
+                                    {% for category in categories %}
+                                        <option{% if editItem is defined and editItem['category_id'] == category['id'] %} selected{% endif %}
+                                                value="{{ category['id'] }}">{{ category['name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="question" class="col-sm-2 control-label">Question</label>
+                            <div class="col-sm-10">
+          <textarea class="form-control" rows="5" name="question" id="question" placeholder="Question"
+                    required>{% if editItem['name'] is defined %}{{ editItem['name'] }}{% endif %}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="author" class="col-sm-2 control-label">Author</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="author" id="author" placeholder="Author"
+                                       value="{% if editItem['author'] is defined %}{{ editItem['author'] }}{% endif %}"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="author_email" class="col-sm-2 control-label">E-mail</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="email" name="author_email" id="author_email"
+                                       placeholder="E-mail"
+                                       value="{% if editItem['author_email'] is defined %}{{ editItem['author_email'] }}{% endif %}"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="answer" class="col-sm-2 control-label">Answer</label>
+                            <div class="col-sm-10">
+          <textarea class="form-control" rows="5" name="answer" id="answer" placeholder="Answer"
+          >{% if editItem['answer'] is defined %}{{ editItem['answer'] }}{% endif %}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state_selector" class="col-sm-2 control-label">Status</label>
+                            <div class="col-sm-10">
+                                <select class="form-control def-width" name="state" id="state_selector">
+                                    {% for state in states %}
+                                        <option
+                                                {% if editItem['state'] is defined %}
+                                                    {% if state == editItem['state'] %} selected{% endif %}
+                                                {% else %}
+                                                    {% if loop.first %} selected{% endif %}
+                                                {% endif %}
+                                                value="{{ state }}">{{ state }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                {% if action == 'edit' %}
+                                    <input type="hidden" name='_method' value="PUT">
+                                    <input type="hidden" name="id" value="{{ editItem['id'] }}">
+                                    <input class="btn btn-success btn-block" type="submit" name="save" value="Save">
+                                {% else %}
+                                    <input class="btn btn-success btn-block" type="submit" name="add" value="Add">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="col-sm-10 col-sm-offset-1">
+                {% for error in errors %}
+                    <div id="alert" class="alert {{ error.getType() }} text-center">{{ error.getMessage() }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            {% for category, questions in categoriesWithQuestions %}
+                {% if questions|length > 0 %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading" id="{{ category }}"><span class="lead">{{ category }}</span></div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>№</th>
+                                    <th>Question</th>
+                                    <th>Author</th>
+                                    <th>E-mail</th>
+                                    <th>State</th>
+                                    <th>Created</th>
+                                    <th>Updated</th>
+                                    <th>Control</th>
+                                </tr>
+                                {% for question in questions %}
+                                    <tr {% if question['answer'] is empty %} class="bg-warning" {% endif %}>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ question['name'] }}</td>
+                                        <td>{{ question['author'] }}</td>
+                                        <td>{{ question['author_email'] }}</td>
+                                        <td>{{ question['state'] }}</td>
+                                        <td>{{ question['created_at'] }}</td>
+                                        <td>{{ question['updated_at'] }}</td>
+                                        <td>
+                                            <a class="btn btn-default btn-block"
+                                               href="{{ staticCall('Router', 'route', ['questions.edit', {'id' : question['id']}]) }}">Update</a>
+                                            <form class="d-inline-block"
+                                                  action="{{ staticCall('Router', 'route', ['questions.destroy', {'id' : question['id']}]) }}"
+                                                  method="POST">
+                                                <input type="hidden" name='_method' value="DELETE">
+                                                <input class="btn btn-danger btn-block" type="submit" name="delete"
+                                                       value="Delete">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-sm-2 col-sm-offset-5 form-group">
+                <div class="form-group">
+                    <a class="btn btn-default btn-block"
+                       href="{{ staticCall('Router', 'route', ['questions.create']) }}">Add
+                        question</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
